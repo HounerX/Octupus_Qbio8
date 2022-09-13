@@ -1,0 +1,60 @@
+
+
+
+
+
+```{r}
+library(tidyverse)
+library(dplyr)
+
+
+data <- read.csv("https://covid.ourworldindata.org/data/owid-covid-data.csv",
+                 na.strings = "",header=T)
+data <- data #%>% filter(continent == "Africa")
+
+```
+
+
+```{r}
+
+
+
+can2 <- data %>% select("new_cases", "female_smokers")
+can2 <- can2 %>% drop_na()
+pvalue <- cor.test(can2$new_cases,can2$female_smokers)
+pvalue
+
+```
+
+
+
+
+now p hack by putting female smokers on log scale
+
+```{r}
+
+
+
+can2 <- data %>% select("new_cases", "female_smokers")
+can2 <- can2 %>% drop_na()
+pvalue <- cor.test(log(can2$new_cases+1),can2$female_smokers)
+pvalue
+
+```
+
+now we can conclude after  that there is no correlation between new cases and female smokers after p hacking by putting new cases on log scale +1 (to avoid 0 cases which will result in problem for log). This works because the scale of number of cases was huge compared to the female smoking number now they are on comparable scale and can draw a conclusion 
+
+```{r}
+
+ggplot(can2, aes(x=new_cases, y=female_smokers)) +
+  geom_point(size=2, shape=23)
+
+```
+
+
+```{r}
+
+ggplot(can2, aes(x=log(new_cases+1), y=female_smokers)) +
+  geom_point(size=2, shape=23)
+
+```
